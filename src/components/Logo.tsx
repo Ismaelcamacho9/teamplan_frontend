@@ -1,6 +1,6 @@
 
 export default function Logo() {
   return (
-    <img src="/public/logo2.svg" alt="Logotipo TeamPlan" />
+    <img src="/public/sello2.jpg" alt="Logotipo TeamPlan" />
   )
 }
