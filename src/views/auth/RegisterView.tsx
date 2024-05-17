@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Importa useNavigate
 import { useMutation } from "@tanstack/react-query";
 import { UserRegistrationForm } from "@/types/index";
 import ErrorMessage from "@/components/ErrorMessage";
@@ -13,6 +13,8 @@ export default function RegisterView() {
     password: "",
     password_confirmation: "",
   };
+
+  const navigate = useNavigate(); // Declara el hook useNavigate
 
   const {
     register,
@@ -30,6 +32,7 @@ export default function RegisterView() {
     onSuccess: (data) => {
       toast.success(data);
       reset();
+      navigate("/auth/login"); // Redirige al login después de un registro exitoso
     },
   });
 
