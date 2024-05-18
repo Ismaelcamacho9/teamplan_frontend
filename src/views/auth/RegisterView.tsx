@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom"; // Importa useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { UserRegistrationForm } from "@/types/index";
 import ErrorMessage from "@/components/ErrorMessage";
@@ -14,7 +15,8 @@ export default function RegisterView() {
     password_confirmation: "",
   };
 
-  const navigate = useNavigate(); // Declara el hook useNavigate
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,17 +30,21 @@ export default function RegisterView() {
     mutationFn: createAccount,
     onError: (error) => {
       toast.error(error.message);
+      setIsSubmitting(false); // Permitir volver a enviar si hay error
     },
     onSuccess: (data) => {
       toast.success(data);
       reset();
-      navigate("/auth/login"); // Redirige al login después de un registro exitoso
+      navigate("/auth/login");
     },
   });
 
   const password = watch("password");
 
-  const handleRegister = (formData: UserRegistrationForm) => mutate(formData);
+  const handleRegister = (formData: UserRegistrationForm) => {
+    setIsSubmitting(true);
+    mutate(formData);
+  };
 
   return (
     <>
@@ -129,7 +135,8 @@ export default function RegisterView() {
         <input
           type="submit"
           value="Registrarme"
-          className="bg-green-light hover:bg-green-dark w-full p-3  text-white font-black  text-xl cursor-pointer"
+          className={`bg-green-light hover:bg-green-dark w-full p-3 text-white font-black text-xl cursor-pointer ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSubmitting}
         />
       </form>
 

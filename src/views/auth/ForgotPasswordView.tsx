@@ -5,8 +5,10 @@ import { ForgotPasswordForm } from "../../types";
 import ErrorMessage from "@/components/ErrorMessage";
 import { forgotPassword } from "@/api/AuthAPI";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 export default function ForgotPasswordView() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const initialValues: ForgotPasswordForm = {
     email: "",
   };
@@ -21,15 +23,19 @@ export default function ForgotPasswordView() {
     mutationFn: forgotPassword,
     onError: (error) => {
       toast.error(error.message);
+      setIsSubmitting(false);
     },
     onSuccess: (data) => {
       toast.success(data);
+
       reset();
     },
   });
 
-  const handleForgotPassword = (formData: ForgotPasswordForm) =>
+  const handleForgotPassword = (formData: ForgotPasswordForm) => {
+    setIsSubmitting(true);
     mutate(formData);
+  };
 
   return (
     <>
@@ -71,6 +77,7 @@ export default function ForgotPasswordView() {
           type="submit"
           value="Enviar Instrucciones"
           className="bg-green-light hover:bg-green-dark w-full p-3  text-white font-black  text-xl cursor-pointer"
+          disabled={isSubmitting}
         />
       </form>
 

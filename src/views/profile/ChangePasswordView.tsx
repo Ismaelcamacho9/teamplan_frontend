@@ -4,8 +4,10 @@ import { UpdateCurrentUserPasswordForm } from "@/types/index";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { changePassword } from "@/api/ProfileAPI";
+import { useState } from "react";
 
 export default function ChangePasswordView() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const initialValues : UpdateCurrentUserPasswordForm = {
     current_password: '',
     password: '',
@@ -15,13 +17,19 @@ export default function ChangePasswordView() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm({ defaultValues: initialValues })
 
   const { mutate } = useMutation({
-      mutationFn: changePassword,
-      onError: (error) => toast.error(error.message),
-      onSuccess: (data)  => toast.success(data)
-  })
+    mutationFn: changePassword,
+    onError: (error) => {
+      toast.error(error.message);
+      setIsSubmitting(false);
+    },
+    onSuccess: (data) => {
+      toast.success(data);
+    }
+  });
+  
 
   const password = watch('password');
-  const handleChangePassword = (formData : UpdateCurrentUserPasswordForm) => mutate(formData)
+  const handleChangePassword = (formData : UpdateCurrentUserPasswordForm) => {setIsSubmitting(true);mutate(formData)}
 
   return (
     <>
@@ -45,6 +53,7 @@ export default function ChangePasswordView() {
               type="password"
               placeholder="Password Actual"
               className="w-full p-3  border border-gray-200"
+              
               {...register("current_password", {
                 required: "El password actual es obligatorio",
               })}
@@ -101,6 +110,7 @@ export default function ChangePasswordView() {
             type="submit"
             value='Cambiar Password'
             className="bg-green-light w-full p-3 text-white uppercase font-bold hover:bg-green-dark cursor-pointer transition-colors"
+            disabled={isSubmitting}
           />
         </form>
       </div>

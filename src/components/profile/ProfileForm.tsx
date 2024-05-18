@@ -4,12 +4,14 @@ import { User, UserProfileForm } from "@/types/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "@/api/ProfileAPI";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 type ProfileFormProps = {
   data: User;
 };
 
 export default function ProfileForm({ data }: ProfileFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -19,14 +21,15 @@ export default function ProfileForm({ data }: ProfileFormProps) {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: updateProfile,
-    onError: (error) => toast.error(error.message),
+    onError: (error) => {toast.error(error.message);
+    setIsSubmitting(false);},
     onSuccess: (data) => {
       toast.success(data);
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 
-  const handleEditProfile = (formData: UserProfileForm) => mutate(formData);
+  const handleEditProfile = (formData: UserProfileForm) =>{setIsSubmitting(true); mutate(formData);}
 
   return (
     <>
@@ -82,6 +85,7 @@ export default function ProfileForm({ data }: ProfileFormProps) {
             type="submit"
             value="Guardar Cambios"
             className="bg-green-light w-full p-3 text-white uppercase font-bold hover:bg-green-dark cursor-pointer transition-colors"
+            disabled={isSubmitting}
           />
         </form>
       </div>
