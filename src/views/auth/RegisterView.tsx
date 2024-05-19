@@ -123,7 +123,7 @@ export default function RegisterView() {
             {...register("password_confirmation", {
               required: "Repetir Password es obligatorio",
               validate: (value) =>
-                value === password || "Los Passwords no son iguales",
+                value === password || "Las Passwords no coinciden",
             })}
           />
 
